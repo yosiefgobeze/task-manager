@@ -1,0 +1,57 @@
+### Get all tasks
+GET http://localhost:8080/api/tasks
+Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
+
+### Create a task
+POST http://localhost:8080/api/tasks
+Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
+Content-Type: application/json
+
+{
+  "title": "Learn Spring Boot",
+  "description": "Build the TaskManager application"
+}
+
+### Invalid request
+POST http://localhost:8080/api/tasks
+Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
+Content-Type: application/json
+
+{
+  "title": "",
+  "description": "No title"
+}
+
+
+### Get all tasks
+GET http://localhost:8080/api/tasks
+Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
+Accept: application/json
+
+### Get task by ID
+GET http://localhost:8080/api/tasks/999
+Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
+Accept: application/json
+
+### Update task
+PUT http://localhost:8080/api/tasks/999
+Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
+Content-Type: application/json
+
+{
+  "title": "Learn Spring Boot",
+  "description": "Build the TaskManager application",
+  "completed": true
+}
+
+
+### Delete task
+DELETE http://localhost:8080/api/tasks/2
+Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
+
+### Get all tasks after deletion
+GET http://localhost:8080/api/tasks
+Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
+Accept: application/json
+
+

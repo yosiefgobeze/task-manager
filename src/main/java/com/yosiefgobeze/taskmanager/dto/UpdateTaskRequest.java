@@ -1,8 +1,16 @@
 package com.yosiefgobeze.taskmanager.dto;
 
-public record UpdateTaskRequest(
-        String title,
-        String description,
-        Boolean completed
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record UpdateTaskRequest(@NotBlank(message = "Title is required")
+                                @Size(max = 200, message = "Title must not exceed 200 characters")
+                                String title,
+
+                                @Size(max = 2000, message = "Description must not exceed 2000 characters")
+                                String description,
+
+                                Boolean completed
+
 ) {
 }
