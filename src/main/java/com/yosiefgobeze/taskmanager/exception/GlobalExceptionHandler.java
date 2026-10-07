@@ -27,26 +27,55 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationErrors(
-            MethodArgumentNotValidException exception) {
-
-        String message = exception.getBindingResult()
+    public ResponseEntity<ErrorResponse> handleValidationException(
+            MethodArgumentNotValidException ex
+    ) {
+        String message = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .map(error -> {
+                    if (error.getRejectedValue() instanceof String value
+                            && value.isBlank()) {
+
+                        if ("username".equals(error.getField())) {
+                            return "username: Username is required";
+                        }
+
+                        if ("password".equals(error.getField())) {
+                            return "password: Password is required";
+                        }
+                    }
+
+                    return error.getField() + ": " + error.getDefaultMessage();
+                })
                 .findFirst()
                 .orElse("Validation failed");
 
         ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
+                400,
                 message,
+                java.time.LocalDateTime.now()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(errorResponse);
+    }
+
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgument(
+            IllegalArgumentException exception) {
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                exception.getMessage(),
                 LocalDateTime.now()
         );
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(errorResponse);
-
-
     }
+
 }

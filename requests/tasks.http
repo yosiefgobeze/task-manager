@@ -1,10 +1,65 @@
-### Get all tasks
-GET http://localhost:8080/api/tasks
-Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
+### ============================================================
+### AUTHENTICATION
+### ============================================================
 
-### Create a task
+### 1. Register a new user
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "yosief",
+  "password": "password123"
+}
+
+
+### 2. Login
+### Use the registered username/password.
+### Copy the JWT token from the response.
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "yosief",
+  "password": "password123"
+}
+
+
+### ============================================================
+### TASKS - UNAUTHORIZED
+### ============================================================
+
+### 3. Get all tasks without authentication
+### Expected: 401 Unauthorized
+GET http://localhost:8080/api/tasks
+Accept: application/json
+
+
+### 4. Create task without authentication
+### Expected: 401 Unauthorized
 POST http://localhost:8080/api/tasks
-Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
+Content-Type: application/json
+
+{
+  "title": "Unauthorized Task",
+  "description": "This should not be created"
+}
+
+
+### ============================================================
+### TASKS - AUTHENTICATED
+### ============================================================
+### Replace YOUR_JWT_TOKEN with the token returned by login.
+### ============================================================
+
+### 5. Get all tasks
+GET http://localhost:8080/api/tasks
+Authorization: Bearer YOUR_JWT_TOKEN
+Accept: application/json
+
+
+### 6. Create a task
+POST http://localhost:8080/api/tasks
+Authorization: Bearer YOUR_JWT_TOKEN
 Content-Type: application/json
 
 {
@@ -12,9 +67,38 @@ Content-Type: application/json
   "description": "Build the TaskManager application"
 }
 
-### Invalid request
+
+### 7. Create another task
 POST http://localhost:8080/api/tasks
-Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+
+{
+  "title": "Learn React",
+  "description": "Build the TaskManager frontend"
+}
+
+
+### 8. Create a completed task
+POST http://localhost:8080/api/tasks
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+
+{
+  "title": "Finish backend",
+  "description": "Complete the TaskManager backend",
+  "completed": true
+}
+
+
+### ============================================================
+### VALIDATION TESTS
+### ============================================================
+
+### 9. Create task with blank title
+### Expected: 400 Bad Request
+POST http://localhost:8080/api/tasks
+Authorization: Bearer YOUR_JWT_TOKEN
 Content-Type: application/json
 
 {
@@ -23,35 +107,205 @@ Content-Type: application/json
 }
 
 
-### Get all tasks
-GET http://localhost:8080/api/tasks
-Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
-Accept: application/json
-
-### Get task by ID
-GET http://localhost:8080/api/tasks/999
-Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
-Accept: application/json
-
-### Update task
-PUT http://localhost:8080/api/tasks/999
-Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
+### 10. Create task without title
+### Expected: 400 Bad Request
+POST http://localhost:8080/api/tasks
+Authorization: Bearer YOUR_JWT_TOKEN
 Content-Type: application/json
 
 {
-  "title": "Learn Spring Boot",
-  "description": "Build the TaskManager application",
+  "description": "Title is missing"
+}
+
+
+### 11. Update task with blank title
+### Replace 1 with an existing task ID.
+### Expected: 400 Bad Request
+PUT http://localhost:8080/api/tasks/1
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+
+{
+  "title": "",
+  "description": "Invalid update",
   "completed": true
 }
 
 
-### Delete task
-DELETE http://localhost:8080/api/tasks/2
-Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
+### ============================================================
+### GET TASKS
+### ============================================================
 
-### Get all tasks after deletion
+### 12. Get all tasks
 GET http://localhost:8080/api/tasks
-Authorization: Basic dGFza21hbmFnZXI6Y2hhbmdlLW1l
+Authorization: Bearer YOUR_JWT_TOKEN
 Accept: application/json
 
 
+### 13. Get task by ID
+### Replace 1 with an existing task ID.
+GET http://localhost:8080/api/tasks/2
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhbGljZSIsImlhdCI6MTc5MTMzNjA3MywiZXhwIjoxNzkxNDIyNDczfQ.tguFM3CTJSuY0Q0bvOhL3jP7WkG-710xr4WIQKjBvqY66eeF1qTLJf5bmw_fwr3m
+Accept: application/json
+
+
+### 14. Get non-existing task
+### Expected: 404 Not Found
+GET http://localhost:8080/api/tasks/1
+Authorization: Bearer YOUR_JWT_TOKEN
+Accept: application/json
+
+
+### ============================================================
+### UPDATE TASKS
+### ============================================================
+
+### 15. Update an existing task
+### Replace 1 with an existing task ID.
+PUT http://localhost:8080/api/tasks/2
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhbGljZSIsImlhdCI6MTc5MTMzNjA3MywiZXhwIjoxNzkxNDIyNDczfQ.tguFM3CTJSuY0Q0bvOhL3jP7WkG-710xr4WIQKjBvqY66eeF1qTLJf5bmw_fwr3m
+Content-Type: application/json
+
+{
+  "title": "Alice hacked this task",
+  "description": "This should NOT work",
+  "completed": true
+}
+
+
+### 16. Update non-existing task
+### Expected: 404 Not Found
+PUT http://localhost:8080/api/tasks/999999
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+
+{
+  "title": "Doesn't exist",
+  "description": "Testing missing task",
+  "completed": true
+}
+
+
+### ============================================================
+### DELETE TASKS
+### ============================================================
+
+### 17. Delete an existing task
+### Replace 2 with an existing task ID.
+### Expected: 204 No Content
+DELETE http://localhost:8080/api/tasks/2
+Authorization: Bearer YOUR_JWT_TOKEN
+
+
+### 18. Delete non-existing task
+### Expected: 404 Not Found
+DELETE http://localhost:8080/api/tasks/999999
+Authorization: Bearer YOUR_JWT_TOKEN
+
+
+### 19. Verify task deletion
+GET http://localhost:8080/api/tasks
+Authorization: Bearer YOUR_JWT_TOKEN
+Accept: application/json
+
+
+### ============================================================
+### JWT / SECURITY TESTS
+### ============================================================
+
+### 20. Invalid JWT
+### Expected: 401 Unauthorized
+GET http://localhost:8080/api/tasks
+Authorization: Bearer invalid.jwt.token
+Accept: application/json
+
+
+### 21. Missing Bearer token
+### Expected: 401 Unauthorized
+GET http://localhost:8080/api/tasks
+Accept: application/json
+
+
+### 22. Malformed Authorization header
+### Expected: 401 Unauthorized
+GET http://localhost:8080/api/tasks
+Authorization: InvalidToken
+Accept: application/json
+
+
+### ============================================================
+### AUTHENTICATION EDGE CASES
+### ============================================================
+
+### 23. Register duplicate username
+### Expected: 400/409 depending on your implementation
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "yosief",
+  "password": "password123"
+}
+
+
+### 24. Login with wrong password
+### Expected: 401 Unauthorized
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "yosief",
+  "password": "wrong-password"
+}
+
+
+### 25. Login with non-existing user
+### Expected: 401 Unauthorized
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "does-not-exist",
+  "password": "password123"
+}
+
+
+### ============================================================
+### SECOND USER / AUTHORIZATION TEST
+### ============================================================
+
+### 26. Register a second user
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "alice",
+  "password": "password123"
+}
+
+
+### 27. Login as second user
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "alice",
+  "password": "password123"
+}
+
+
+### 28. Get tasks as second user
+### Replace SECOND_USER_JWT_TOKEN with Alice's JWT.
+GET http://localhost:8080/api/tasks
+Authorization: Bearer SECOND_USER_JWT_TOKEN
+Accept: application/json
+
+
+### ============================================================
+### FINAL TASK LIST
+### ============================================================
+
+### 29. Get all tasks after all tests
+GET http://localhost:8080/api/tasks
+Authorization: Bearer YOUR_JWT_TOKEN
+Accept: application/json

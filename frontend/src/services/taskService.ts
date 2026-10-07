@@ -1,43 +1,47 @@
 import api from "./api";
-import type {
-    Task,
-    CreateTaskRequest,
-    UpdateTaskRequest,
-} from "../types/task";
+import type { Task } from "../types/task";
 
 const taskService = {
-    getAll: async (): Promise<Task[]> => {
-        const response = await api.get<Task[]>("/tasks");
-        return response.data;
-    },
 
-    getById: async (id: number): Promise<Task> => {
-        const response = await api.get<Task>(`/tasks/${id}`);
-        return response.data;
-    },
+  getAll: async (): Promise<Task[]> => {
+    const response =
+      await api.get<Task[]>("/tasks");
 
-    create: async (
-        request: CreateTaskRequest
-    ): Promise<Task> => {
-        const response = await api.post<Task>("/tasks", request);
-        return response.data;
-    },
+    return response.data;
+  },
 
-    update: async (
-        id: number,
-        request: UpdateTaskRequest
-    ): Promise<Task> => {
-        const response = await api.put<Task>(
-            `/tasks/${id}`,
-            request
-        );
+  create: async (task: {
+    title: string;
+    description: string;
+  }): Promise<Task> => {
 
-        return response.data;
-    },
+    const response =
+      await api.post<Task>("/tasks", task);
 
-    delete: async (id: number): Promise<void> => {
-        await api.delete(`/tasks/${id}`);
-    },
+    return response.data;
+  },
+
+  update: async (
+    id: number,
+    task: {
+      title: string;
+      description: string;
+      completed: boolean;
+    }
+  ): Promise<Task> => {
+
+    const response =
+      await api.put<Task>(
+        `/tasks/${id}`,
+        task
+      );
+
+    return response.data;
+  },
+
+  delete: async (id: number): Promise<void> => {
+    await api.delete(`/tasks/${id}`);
+  },
 };
 
 export default taskService;

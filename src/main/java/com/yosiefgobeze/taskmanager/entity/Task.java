@@ -33,6 +33,10 @@ public class Task {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     public Task(String title, String description) {
         this.title = title;
         this.description = description;
@@ -57,5 +61,4 @@ public class Task {
     public void markIncomplete() {
         this.completed = false;
     }
-
 }
