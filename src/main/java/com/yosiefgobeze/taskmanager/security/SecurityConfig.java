@@ -29,8 +29,8 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
-    @Value("${app.frontend-url}")
-    private String frontendUrl;
+//    @Value("${app.frontend-url}")
+//    private String frontendUrl;
 
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -91,25 +91,55 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//
+//        CorsConfiguration configuration =
+//                new CorsConfiguration();
+//
+//        configuration.setAllowedOrigins(
+//                List.of(frontendUrl)
+//        );
+//
+//
+//        configuration.setAllowedMethods(
+//                List.of(
+//                        HttpMethod.GET.name(),
+//                        HttpMethod.POST.name(),
+//                        HttpMethod.PUT.name(),
+//                        HttpMethod.DELETE.name(),
+//                        HttpMethod.OPTIONS.name()
+//                )
+//        );
+//
+//        configuration.setAllowedHeaders(
+//                List.of("*")
+//        );
+//
+//        configuration.setAllowCredentials(false);
+//
+//        UrlBasedCorsConfigurationSource source =
+//                new UrlBasedCorsConfigurationSource();
+//
+//        source.registerCorsConfiguration(
+//                "/**",
+//                configuration
+//        );
+//
+//        return source;
+//    }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
-        CorsConfiguration configuration =
-                new CorsConfiguration();
+        CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(
-                List.of(frontendUrl)
+                List.of("http://13.56.138.111")
         );
 
-
         configuration.setAllowedMethods(
-                List.of(
-                        HttpMethod.GET.name(),
-                        HttpMethod.POST.name(),
-                        HttpMethod.PUT.name(),
-                        HttpMethod.DELETE.name(),
-                        HttpMethod.OPTIONS.name()
-                )
+                List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
         );
 
         configuration.setAllowedHeaders(
@@ -121,11 +151,9 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration(
-                "/**",
-                configuration
-        );
+        source.registerCorsConfiguration("/**", configuration);
 
         return source;
     }
+
 }
